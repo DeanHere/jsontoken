@@ -11,11 +11,13 @@ What I have done:
 1. Apply changes from networknt/jsontoken (https://github.com/networknt/jsontoken), but still use Joda time, so it is good for Java 7.
 2. Covert Json parser from Gson to fastjson.
 3. Remove google collections from dependency list.
-4. Add "JWT" as tpy in header.
+4. Add "JWT" as typ in header.
 
 I did NOT run the existing unit tests. And I did NOT change the pom.xml.
+
 =======
 Dependencies: Joda time, fastjson, commons-codec
+
 =======
 Here is a sample to generate token and verify the token.
 
