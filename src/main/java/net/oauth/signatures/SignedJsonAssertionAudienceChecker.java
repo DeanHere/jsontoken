@@ -16,14 +16,14 @@
  */
 package net.oauth.signatures;
 
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonObject;
 
 import java.net.URI;
 import java.security.SignatureException;
+import java.util.Map;
 
 import net.oauth.jsontoken.Checker;
 import net.oauth.jsontoken.JsonToken;
+import net.oauth.jsontoken.JsonTokenUtil;
 
 /**
  * Audience checker for signed Json Assertion.
@@ -42,14 +42,14 @@ public class SignedJsonAssertionAudienceChecker implements Checker {
   }
 
   /**
-   * @see net.oauth.jsontoken.Checker#check(com.google.gson.JsonObject)
+   * @see net.oauth.jsontoken.Checker#check(java.util.Map)
    */
   @Override
-  public void check(JsonObject payload) throws SignatureException {
+  public void check(Map<String, Object> payload) throws SignatureException {
     checkUri(tokenEndpointUri,
-        Preconditions.checkNotNull(
-            payload.get(JsonToken.AUDIENCE).getAsString(),
-            "Audience cannot be null!"));
+            JsonTokenUtil.checkNotNull(
+                (String) payload.get(JsonToken.AUDIENCE),
+                "Audience cannot be null!"));
   }
 
   private static void checkUri(String ourUriString, String tokenUriString) throws SignatureException {

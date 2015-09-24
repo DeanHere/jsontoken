@@ -16,13 +16,16 @@
  */
 package net.oauth.jsontoken.discovery;
 
-import com.google.common.collect.Maps;
-import com.google.gson.Gson;
-import com.google.gson.annotations.SerializedName;
+import com.alibaba.fastjson.JSON;
+//import com.fasterxml.jackson.annotation.JsonProperty;
+//import com.fasterxml.jackson.databind.DeserializationConfig;
+//import com.fasterxml.jackson.databind.DeserializationFeature;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.oauth.jsontoken.crypto.MagicRsaPublicKey;
 
 import java.security.PublicKey;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 /**
@@ -32,9 +35,10 @@ import java.util.Map;
  * methods of the {@link ServerInfo} interface.
  */
 public class JsonServerInfo implements ServerInfo {
+//  static ObjectMapper mapper = new ObjectMapper();
 
-  @SerializedName("verification_keys")
-  private final Map<String, String> verificationKeys = Maps.newHashMap();
+//  @JsonProperty("verification_keys")
+  private final Map<String, String> verificationKeys = new LinkedHashMap<String, String>();
 
   /**
    * Parses a JSON-formatted server info document and returns it as a
@@ -42,7 +46,15 @@ public class JsonServerInfo implements ServerInfo {
    * @param json the contents of the JSON-formatted server info document.
    */
   public static JsonServerInfo getDocument(String json) {
-    return new Gson().fromJson(json, JsonServerInfo.class);
+      JsonServerInfo jsi = null;
+      try {
+//          mapper.configure(DeserializationFeature.FAIL_ON_UNKNOWN_PROPERTIES, false);
+//          jsi = mapper.readValue(json, JsonServerInfo.class);
+          jsi = JSON.parseObject(json, JsonServerInfo.class);
+      } catch (Exception e) {
+          e.printStackTrace();
+      }
+      return jsi;
   }
 
   /*

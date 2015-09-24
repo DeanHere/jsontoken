@@ -1,9 +1,8 @@
 package net.oauth.jsontoken.discovery;
 
-import com.google.common.collect.Lists;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
+import com.alibaba.fastjson.JSON;
+//import com.fasterxml.jackson.core.type.TypeReference;
+//import com.fasterxml.jackson.databind.ObjectMapper;
 
 import net.oauth.jsontoken.crypto.RsaSHA256Verifier;
 import net.oauth.jsontoken.crypto.Verifier;
@@ -21,6 +20,8 @@ import java.net.URL;
 import java.security.cert.CertificateException;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -32,6 +33,7 @@ import java.util.Map;
 public class UrlBasedVerifierProvider implements VerifierProvider {
 
   private final String publicCertUrl;
+//  ObjectMapper mapper = new ObjectMapper();
 
   public UrlBasedVerifierProvider(String publicCertUrl) {
     this.publicCertUrl = publicCertUrl;
@@ -47,19 +49,20 @@ public class UrlBasedVerifierProvider implements VerifierProvider {
         
         InputStreamReader in = new InputStreamReader((InputStream) connection.getContent());
         BufferedReader buff = new BufferedReader(in);
-        StringBuffer content = new StringBuffer();
+        StringBuilder content = new StringBuilder();
         String line = "";
         do {
           line = buff.readLine();
           content.append(line + "\n");
         } while (line != null);
+
+//        Map<String, Object> jsonMap = mapper.readValue(content.toString(),new TypeReference<LinkedHashMap<String,Object>>(){});
+        @SuppressWarnings("unchecked")
+		Map<String, Object> jsonMap = JSON.parseObject(content.toString(), LinkedHashMap.class);
+        List<Verifier> verifiers = new ArrayList<Verifier>();
         
-        JsonParser parser = new JsonParser();
-        JsonObject jsonObject = parser.parse(content.toString()).getAsJsonObject();
-        List<Verifier> verifiers = Lists.newArrayList();
-        
-        for (Map.Entry<String, JsonElement> cert : jsonObject.entrySet()) {
-          String x509PemCertString = cert.getValue().getAsString();
+        for (Map.Entry<String, Object> cert : jsonMap.entrySet()) {
+          String x509PemCertString = (String)cert.getValue();
           // Parse pem format
           String[] parts = x509PemCertString.split("\n");
           if (parts.length < 3) {

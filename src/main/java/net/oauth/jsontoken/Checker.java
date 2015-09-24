@@ -16,9 +16,8 @@
  */
 package net.oauth.jsontoken;
 
-import com.google.gson.JsonObject;
-
 import java.security.SignatureException;
+import java.util.Map;
 
 /**
  * Token verifiers must implement this interface.
@@ -31,6 +30,6 @@ public interface Checker {
    * @param payload the payload component of a JsonToken (JWT)
    * @throws SignatureException if the audience doesn't match.
    */
-  public void check(JsonObject payload) throws SignatureException;
+  public void check(Map<String, Object> payload) throws SignatureException;
 
 }

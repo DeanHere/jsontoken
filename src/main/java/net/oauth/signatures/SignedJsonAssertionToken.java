@@ -20,13 +20,12 @@ import java.io.UnsupportedEncodingException;
 import java.net.URLEncoder;
 import java.security.SignatureException;
 
+import org.joda.time.Duration;
+
 import net.oauth.jsontoken.Clock;
 import net.oauth.jsontoken.JsonToken;
 import net.oauth.jsontoken.crypto.Signer;
-import org.joda.time.Duration;
 
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonPrimitive;
 
 /**
  * A signed Json Assertion
@@ -52,12 +51,11 @@ public class SignedJsonAssertionToken extends JsonToken {
   }
   
   public SignedJsonAssertionToken(JsonToken token) {
-    super(token.getPayloadAsJsonObject());
+    super(token.getPayload());
   }
 
   public String getSubject() {
-    JsonPrimitive subjectJson = getParamAsPrimitive(SUBJECT);
-    return subjectJson == null ? null : subjectJson.getAsString();
+    return getParamAsString(SUBJECT);
   }
 
   public void setSubject(String m) {
@@ -65,8 +63,7 @@ public class SignedJsonAssertionToken extends JsonToken {
   }
   
   public String getScope() {
-    JsonPrimitive scopeJson = getParamAsPrimitive(SCOPE);
-    return scopeJson == null ? null : scopeJson.getAsString();
+    return getParamAsString(SCOPE);
   }
   
   public void setScope(String scope) {
@@ -74,8 +71,7 @@ public class SignedJsonAssertionToken extends JsonToken {
   }
 
   public String getNonce() {
-    JsonPrimitive nonceJson = getParamAsPrimitive(NONCE);
-    return nonceJson == null ? null : nonceJson.getAsString();
+    return getParamAsString(NONCE);
   }
 
   public void setNonce(String n) {
@@ -105,7 +101,7 @@ public class SignedJsonAssertionToken extends JsonToken {
       setIssuedAt(clock.now());
     }
     if (getExpiration() == null) {
-      setExpiration(getIssuedAt().plus(Duration.standardMinutes(DEFAULT_LIFETIME_IN_MINS)));
+    	setExpiration(getIssuedAt().plus(Duration.standardMinutes(DEFAULT_LIFETIME_IN_MINS)));
     }
     return super.computeSignatureBaseString();
   }

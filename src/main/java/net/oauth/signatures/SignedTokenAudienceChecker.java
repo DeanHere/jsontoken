@@ -16,15 +16,12 @@
  */
 package net.oauth.signatures;
 
-import java.net.URI;
 import java.security.SignatureException;
+import java.util.Map;
 
 import net.oauth.jsontoken.Checker;
 import net.oauth.jsontoken.JsonToken;
-
-import com.google.common.base.Objects;
-import com.google.common.base.Preconditions;
-import com.google.gson.JsonObject;
+import net.oauth.jsontoken.JsonTokenUtil;
 
 /**
  * Audience checker for signed OAuth tokens. For such tokens, the audience in the token
@@ -45,17 +42,21 @@ public class SignedTokenAudienceChecker implements Checker {
   }
 
   /**
-   * @see net.oauth.jsontoken.Checker#check(com.google.gson.JsonObject)
+   * @see net.oauth.jsontoken.Checker#check(java.util.Map)
    */
   @Override
-  public void check(JsonObject payload) throws SignatureException {
+  public void check(Map<String, Object> payload) throws SignatureException {
     checkUri(serverUri,
-        Preconditions.checkNotNull(
-            payload.get(JsonToken.AUDIENCE).getAsString(),
-            "Audience cannot be null!"));
+            JsonTokenUtil.checkNotNull(
+                    (String) payload.get(JsonToken.AUDIENCE),
+                    "Audience cannot be null!"));
   }
 
   private static void checkUri(String ourUriString, String tokenUriString) throws SignatureException {
+    if(!tokenUriString.equalsIgnoreCase(ourUriString)) {
+        throw new SignatureException("Wrong audience URI");
+    }
+    /*
     URI ourUri = URI.create(ourUriString);
     URI tokenUri = URI.create(tokenUriString);
 
@@ -67,12 +68,13 @@ public class SignedTokenAudienceChecker implements Checker {
       throw new SignatureException("authority in token URI (" + tokenUri.getAuthority() + ") is wrong");
     }
 
-    if (!Objects.equal(ourUri.getPath(), tokenUri.getPath())) {
+    if (!JsonTokenUtil.equal(ourUri.getPath(), tokenUri.getPath())) {
       throw new SignatureException("path in token URI (" + tokenUri.getAuthority() + ") is wrong");
     }
 
-    if (!Objects.equal(ourUri.getQuery(), tokenUri.getQuery())) {
+    if (!JsonTokenUtil.equal(ourUri.getQuery(), tokenUri.getQuery())) {
       throw new SignatureException("query string in URI (" + tokenUri.getQuery() + ") is wrong");
     }
+    */
   }
 }

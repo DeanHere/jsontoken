@@ -20,13 +20,11 @@ import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
 import java.security.SignatureException;
 
-import org.apache.commons.codec.binary.Base64;
-
 import net.oauth.jsontoken.Clock;
+import org.apache.commons.codec.binary.Base64;
 import net.oauth.jsontoken.JsonToken;
 import net.oauth.jsontoken.crypto.Signer;
-
-import com.google.common.base.Preconditions;
+import net.oauth.jsontoken.JsonTokenUtil;
 
 /**
  * A signed OAuth token.
@@ -51,11 +49,11 @@ public class SignedOAuthToken extends JsonToken {
   }
   
   public SignedOAuthToken(JsonToken token) {
-    super(token.getPayloadAsJsonObject());
+    super(token.getPayload());
   }
 
   public String getMethod() {
-    return getParamAsPrimitive(METHOD).getAsString();
+    return getParamAsString(METHOD);
   }
 
   public void setMethod(String m) {
@@ -63,7 +61,7 @@ public class SignedOAuthToken extends JsonToken {
   }
 
   public String getBodyHash() {
-    return getParamAsPrimitive(BODY_HASH).getAsString();
+    return getParamAsString(BODY_HASH);
   }
 
   public void setRequestBody(byte[] body) {
@@ -71,7 +69,7 @@ public class SignedOAuthToken extends JsonToken {
   }
 
   public String getOAuthToken() {
-    return getParamAsPrimitive(OAUTH_TOKEN).getAsString();
+    return getParamAsString(OAUTH_TOKEN);
   }
 
   public void setOAuthToken(String t) {
@@ -79,7 +77,7 @@ public class SignedOAuthToken extends JsonToken {
   }
 
   public String getNonce() {
-    return getParamAsPrimitive(NONCE).getAsString();
+    return getParamAsString(NONCE);
   }
 
   public void setNonce(String n) {
@@ -92,15 +90,15 @@ public class SignedOAuthToken extends JsonToken {
 
   @Override
   public String serializeAndSign() throws SignatureException {
-    Preconditions.checkNotNull(getOAuthToken(), "must set OAuth token");
-    Preconditions.checkNotNull(getNonce(), "must set nonce");
-    Preconditions.checkNotNull(getAudience(), "must set Audience");
-    Preconditions.checkNotNull(getMethod(), "must set method");
+      JsonTokenUtil.checkNotNull(getOAuthToken(), "must set OAuth token");
+      JsonTokenUtil.checkNotNull(getNonce(), "must set nonce");
+      JsonTokenUtil.checkNotNull(getAudience(), "must set Audience");
+      JsonTokenUtil.checkNotNull(getMethod(), "must set method");
     return super.serializeAndSign();
   }
 
   private String getBodyHash(byte[] requestBody) {
-    Preconditions.checkNotNull(requestBody);
+      JsonTokenUtil.checkNotNull(requestBody);
     String hashAlg = getSignatureAlgorithm().getHashAlgorithm();
     MessageDigest digest;
     try {

@@ -17,17 +17,11 @@
 package net.oauth.signatures;
 
 import java.security.SignatureException;
-import java.util.Enumeration;
-
-import javax.servlet.http.HttpServletRequest;
 
 import net.oauth.jsontoken.Clock;
 import net.oauth.jsontoken.JsonTokenParser;
 import net.oauth.jsontoken.SystemClock;
 import net.oauth.jsontoken.discovery.VerifierProviders;
-
-import org.apache.http.NameValuePair;
-import org.apache.http.message.BasicHeaderValueParser;
 
 /**
  * Parses signed OAuth tokens.
@@ -75,6 +69,7 @@ public class SignedOAuthTokenParser {
    * @throws SignatureException if the signature doesn't check out, or if authentication fails
    *   for other reason (missing Authorization header, etc.).
    */
+  /*
   public SignedOAuthToken parseToken(HttpServletRequest request) throws SignatureException {
 
     // this guaranteed to return a string starting with "Token", or null
@@ -110,6 +105,7 @@ public class SignedOAuthTokenParser {
 
     return parseToken(token, method, uri.toString());
   }
+   */
 
   /**
    * Parses the provided signed OAuth token, and then verifies it against the provided HTTP method
@@ -120,7 +116,7 @@ public class SignedOAuthTokenParser {
    * @return the signed OAuth token (deserialized)
    * @throws SignatureException if the signature (or anything else) doesn't check out.
    */
-  public SignedOAuthToken parseToken(String tokenString, String method, String uri) throws SignatureException {
+  public SignedOAuthToken parseToken(String tokenString, String method, String uri) throws Exception {
     JsonTokenParser parser = new JsonTokenParser(clock, locators, new SignedTokenAudienceChecker(uri));
 
     SignedOAuthToken token = new SignedOAuthToken(parser.verifyAndDeserialize(tokenString));
@@ -135,7 +131,7 @@ public class SignedOAuthTokenParser {
 
     return token;
   }
-
+  /*
   private String getAuthHeader(HttpServletRequest request) {
     @SuppressWarnings("unchecked")
     Enumeration<String> authHeaders = request.getHeaders("Authorization");
@@ -153,4 +149,5 @@ public class SignedOAuthTokenParser {
 
     return null;
   }
+  */
 }
