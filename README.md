@@ -19,6 +19,7 @@ I did NOT run the existing unit tests. And I did NOT change the pom.xml.
 Dependencies: Joda time, fastjson, commons-codec
 
 =======
+The latest code in master branch.
 Here is a sample to generate token and verify the token.
 
 ```
